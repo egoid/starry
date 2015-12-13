@@ -1,0 +1,37 @@
+<ion-view ng-controller="LoginController" title="s t a r r y">
+    <ion-content id="bgimg">
+    <div class="button-bar">
+            <button ng-click="login()" class="button button-block button-calm">l o g i n</button>
+    </div>
+        <script id="my-modal.html" type="text/ng-template">
+          <ion-modal-view>
+            <ion-header-bar>
+              <h1 class="title"> n e w f r i e n d </h1>
+            </ion-header-bar>
+            <ion-content>
+              <div class="list">
+                <label class="item item-input">
+                  <span class="input-label">e m a i l</span>
+                  <input ng-model='username' type="text">
+                </label>
+                <label class="item item-input">
+                  <span class="input-label">p w</span>
+                  <input ng-model='password' type="password">
+                </label>
+              </div>
+
+              <button ng-click='register(username, password)' class="button button-block button-positive"> 
+                g o 
+
+
+              </button>
+                <button class="ion-trash-a" ng-click="closeModal()"></button>
+
+          </ion-content>
+          </ion-modal-view>
+        </script>
+
+
+
+    </ion-content>
+</ion-view>
