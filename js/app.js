@@ -1,9 +1,3 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-
 var starry = angular.module('starter', ['gajus.swing' , 'ionic', 'firebase', 'ngStorage', 'ngCordova']);
 var fb = null;
 
@@ -51,7 +45,7 @@ starry.controller("LoginController", function($scope, $cordovaOauth, $localStora
 
     $scope.login = function() {
         $cordovaOauth.facebook("434572043406554", ["email", "read_stream", "user_website", "user_location", "user_relationships"]).then(function(result) {
-            $localStorage.accessToken = result.access_token;
+            localStorage.accessToken = result.access_token;
             $location.path("/profile");
         }, function(error) {
             $location.path("/profile");
@@ -104,38 +98,22 @@ starry.controller("LoginController", function($scope, $cordovaOauth, $localStora
 starry.controller("ProfileController", function($scope, $http, $localStorage, $location) {
 
     $scope.init = function() {
-        if($localStorage.hasOwnProperty("accessToken") === true) {
-            $http.get("https://graph.facebook.com/v2.2/me", { params: { access_token: $localStorage.accessToken, fields: "id,name,gender,location,picture,relationship_status", format: "json" }}).then(function(result) {
+        if(localStorage.hasOwnProperty("accessToken") === true) {
+            $http.get("https://graph.facebook.com/v2.5/me", { params: { access_token: localStorage.accessToken, fields: "id,name,gender,location,picture,relationship_status", format: "json" }}).then(function(result) {
                 $scope.profileData = result.data;
             }, function(error) {
                 alert("There was a problem getting your profile.  Check the logs for details.");
                 console.log(error);
             });
-            $http.get("https://graph.facebook.com/v2.2/me/photos", {params: { access_token: $localStorage.accessToken, fields: "data", format: "json"}}).then(function(result) {
-                $scope.photo = results.data;
+            $http.get("https://graph.facebook.com/v2.5/me/photos", {params: {access_token: localStorage.accessToken, type: "uploaded", field: "url"}}).then(function(results) {
+              console.log(results.data)
             }, function(err) {
                 $scope.photo = error;
             });
-            // $scope.profileData.geo = $localStorage.geo;
-            // $scope.profileData.id 
-            //allows profileData.id/name/gender/location
         } else {
             console.log("Not signed in");
         }
 
-
-            // $http.get("https://graph.facebook.com/v2.2/me", { params: {fields: "id,name,gender,location,relationship_status", format: "json" }}).then(function(result) {
-            //     $scope.profileData = result.data;
-
-            // $http.get("https://graph.facebook.com/v2.2/me/photos", {params: { access_token: $localStorage.accessToken, fields: "data", format: "json"}}).then(function(result) {
-            //     $scope.photo = results.data;
-            // }, function(err) {
-            //     $scope.photo = error;
-            // });
-            // $scope.profileData.geo = $localStorage.geo;
-            //allows profileData.id/name/gender/location
-
-            console.log("Not signed in");
 
     };
 
@@ -166,10 +144,71 @@ starry.controller("FeedController", function ($scope) {
 })
 starry.controller("SplashController", function ($scope, $cordovaOauth, $localStorage, $location, $ionicModal, $firebaseAuth, $location) {
     $scope.init = function() {
+          window.fbAsyncInit = function() {
+              FB.init({
+                appId      : 434572043406554,
+                cookie     : true,  // enable cookies to allow the server to access 
+                                    // the session
+                xfbml      : true,  // parse social plugins on this page
+                version    : 'v2.2' // use version 2.2
+              });
+              FB.login(function(response) {
+                localStorage.accessToken = response.authResponse.accessToken;
+                 statusChangeCallback(response);
+                
+                console.log(response)
+              }, {scope: "user_photos,publish_actions"});
+              // FB.getLoginStatus(function(response) {
+              //   console.log(response)
+              // });
+          };
+          function statusChangeCallback(response) {
+            console.log('statusChangeCallback');
+            console.log(response);
+            if (response.status === 'connected') {
+
+              testAPI();
+            } else if (response.status === 'not_authorized') {
+              document.getElementById('status').innerHTML = 'Please log ' +
+                'into this app.';
+            } else {
+              document.getElementById('status').innerHTML = 'Please log ' +
+                'into Facebook.';
+            }
+          };
+          function testAPI() {
+            FB.api("/me/photos", {type: "uploaded"}, function(results) {
+                localStorage.pics="";
+                for (key in results.data) {
+                    localStorage.pics+=(results.data[key].id+"_")
+                }
+            });
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me/permissions', function(response) {
+                if (response['data'][0]['user_photos']) {
+                    console.log('has the win!')
+                }
+            });
+            FB.api('/me', function(response) {
+              console.log('Successful login for: ' + response.name);
+              document.getElementById('status').innerHTML =
+                'Thanks for logging in, ' + response.name + '!';
+            });
+          }
+          (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+
+
         $.post('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyC5kjfXM3a3lt5QryC5gCA_ejK3-Ve89_0', function(data, status) {
             console.log(data)
             $localStorage.geo = data;
-        })
+        });
+
     }
     var stack;
 
@@ -203,8 +242,5 @@ starry.controller("SplashController", function ($scope, $cordovaOauth, $localSto
         
         })
     };
-
-
-
-})
+});
 
