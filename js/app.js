@@ -57,6 +57,7 @@ starry.controller("LoginController", function($scope, $cordovaOauth, $localStora
             $location.path("/profile");
             console.log(error);
         })
+
     }
 
 
@@ -104,15 +105,38 @@ starry.controller("ProfileController", function($scope, $http, $localStorage, $l
 
     $scope.init = function() {
         if($localStorage.hasOwnProperty("accessToken") === true) {
-            $http.get("https://graph.facebook.com/v2.2/me", { params: { access_token: $localStorage.accessToken, fields: "id,name,gender,location,website,picture,relationship_status", format: "json" }}).then(function(result) {
+            $http.get("https://graph.facebook.com/v2.2/me", { params: { access_token: $localStorage.accessToken, fields: "id,name,gender,location,picture,relationship_status", format: "json" }}).then(function(result) {
                 $scope.profileData = result.data;
             }, function(error) {
                 alert("There was a problem getting your profile.  Check the logs for details.");
                 console.log(error);
             });
+            $http.get("https://graph.facebook.com/v2.2/me/photos", {params: { access_token: $localStorage.accessToken, fields: "data", format: "json"}}).then(function(result) {
+                $scope.photo = results.data;
+            }, function(err) {
+                $scope.photo = error;
+            });
+            // $scope.profileData.geo = $localStorage.geo;
+            // $scope.profileData.id 
+            //allows profileData.id/name/gender/location
         } else {
             console.log("Not signed in");
         }
+
+
+            // $http.get("https://graph.facebook.com/v2.2/me", { params: {fields: "id,name,gender,location,relationship_status", format: "json" }}).then(function(result) {
+            //     $scope.profileData = result.data;
+
+            // $http.get("https://graph.facebook.com/v2.2/me/photos", {params: { access_token: $localStorage.accessToken, fields: "data", format: "json"}}).then(function(result) {
+            //     $scope.photo = results.data;
+            // }, function(err) {
+            //     $scope.photo = error;
+            // });
+            // $scope.profileData.geo = $localStorage.geo;
+            //allows profileData.id/name/gender/location
+
+            console.log("Not signed in");
+
     };
 
 });
@@ -171,11 +195,12 @@ starry.controller("SplashController", function ($scope, $cordovaOauth, $localSto
          $scope.login();
     });
     $scope.login = function() {
-    $cordovaOauth.facebook("434572043406554", ["email", "read_stream", "user_website", "user_location", "user_relationships"]).then(function(result) {
+    $cordovaOauth.facebook("434572043406554", ["email", "user_website", "user_location", "user_relationships", "user_photos"]).then(function(result) {
         $localStorage.accessToken = result.access_token;
         $location.path("/profile");
     }, function(error) {
-        alert(error);
+        $location.path("/profile");
+        
         })
     };
 
