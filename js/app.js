@@ -41,6 +41,17 @@ starry.config(function($stateProvider, $urlRouterProvider) {
 
 starry.controller("ProfileController", function($scope, $http, $localStorage, $location) {
     $scope.picture = localStorage.picture;
+    $scope.profileBio = localStorage.profileBio
+    $scope.edit = function(elemId) {
+        var x =document.getElementById(elemId)
+        x.setAttribute('contenteditable', 'true')
+    };
+    $scope.save = function(name,bio) {
+        var updateName = document.getElementById(name).innerText;
+        var updateBio = document.getElementById(bio).innerText;
+        fb.child($scope.profileData.id).update({full_name: updateName});
+        fb.child($scope.profileData.id).update({bio: updateBio});
+    };
     $scope.init = function() {
         if(localStorage.hasOwnProperty("accessToken") === true) {
             $http.get("https://graph.facebook.com/v2.5/me", { params: { access_token: localStorage.accessToken, fields: "id,name,gender,location,picture,relationship_status", format: "json" }}).then(function(result) {
@@ -130,6 +141,9 @@ starry.controller("SplashController", function ($scope, $cordovaOauth, $localSto
             })
             FB.api('/me', function(response) {
               console.log('Successful login for: ' + response.name);
+                fb.on("value", function(snapshot){
+                    localStorage.profileBio = snapshot.child(response.id).child("bio").val();
+                })
               document.getElementById('status').innerHTML =
                 'Thanks for logging in, ' + response.name + '!';
             });
