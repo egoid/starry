@@ -1,8 +1,34 @@
-#bgimg {
-  background: url('../img/larpa.png') no-repeat center;
+#larpa2 {
   background-size: 100%, 100%;
+}
+.bar.bar-header.bar-light {
+  height:10%;
+}
+.bar.bar-light.title {
+  color:black;
+}
+#mainPic {
+  margin-top:15%;
+  position:relative;
+  left:17.5%;
+  width:65%;
+}
+#mainDescription {
+  position:relative;
+
+  color:white;
+  background-color:#222223;
+  left:7.5%;
+  text-align:center;
+  width:85%;
+  height:35%;
 }
 #home {
   background: url('../img/larpa.png') no-repeat center;
-  background-size: 115%, 100%;
+  background-size: 100%, 100%;
+}
+#bio {
+  width:100%;
+  height:100%;
+  background-color:#222223;
 }

@@ -1,7 +1,28 @@
 <ion-view title="Profile" ng-init="init()">
-    <ion-content scroll="false">
-        {{profileData}}
-<br><br>
-        {{photo}}
+    <ion-content scroll="false" id="larpa2">
+<div class="bar bar-header bar-light">
+  <h1 class="title" style="color:black">{{profileData.name}}</h1>
+</div>
+  <div id="mainPic">
+  <img style="width:100%" src={{picture}}>
+  </div>
+
+  <div id="mainDescription" class="card">
+   <img src="../img/viewmatches.png" style="width:100px;height:55px;float:left">
+   <img src="../img/makematches.png" style="width:100px;float:right">
+        {{profileData.gender}}  <br>
+        {{profileData.location.name}} <br>
+        <hr>
+        politics :: republic <br>
+        planet :: alderaan <br>
+    <p>
+      <div id="bio">
+        <textarea> 
+       </textarea>
+     </div>
+  </div>
+
+
+
     </ion-content>
 </ion-view>
