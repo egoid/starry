@@ -1,11 +1,8 @@
-#larpa2 {
-  background-size: 100%, 100%;
-}
 .bar.bar-header.bar-light {
   height:10%;
 }
-.bar.bar-light.title {
-  color:black;
+h1#headerName {
+  font-family: 'Quicksand', sans-serif;
 }
 #mainPic {
   margin-top:15%;
@@ -15,19 +12,20 @@
 }
 #mainDescription {
   position:relative;
-
+  font-family: 'Quicksand', sans-serif;
   color:white;
   background-color:#222223;
-  left:7.5%;
+  left:4.5%;
   text-align:center;
   width:85%;
-  height:35%;
+  height:95%;
 }
 #home {
-  background: url('../img/larpa.png') no-repeat center;
+font-family: 'Quicksand', sans-serif;
   background-size: 100%, 100%;
 }
 #bio {
+font-family: 'Quicksand', sans-serif;
   width:100%;
   height:100%;
   background-color:#222223;

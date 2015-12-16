@@ -1,26 +1,58 @@
+<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
 <ion-view title="Profile" ng-init="init()">
     <ion-content scroll="false" id="larpa2">
-<div class="bar bar-header bar-light">
-  <h1 class="title" id="headerName" style="color:black" ng-click="edit('headerName')">{{profileData.name}}</h1>
+  <div id="mainDescription" class="card">
+<div class="bar bar-header bar-dark">
+
+  <h1 class="title" id="headerName" style="color:white" ng-click="edit('headerName')">
+    {{profileData.full_name}}   <br> 
+
+    </h1>
 </div>
   <div id="mainPic">
-  <img style="width:100%" src={{picture}}>
+    <ion-slide-box on-slide-changed="slideHasChanged($index)">
+      <ion-slide>
+
+        <div class="box blue"><h1>
+          
+
+
+          <img style="width:100%" src={{picture}}>
+
+          <p></h1></div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box yellow"><h1>
+
+         <img style="width:100%" src={{picture}}>
+
+         <span style="opacity:0"> s </span>
+        </h1></div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box pink"><h1>
+
+          <img style="width:100%" src={{picture}}>
+
+        <p></h1></div>
+      </ion-slide>
+    </ion-slide-box>
+<!-- <i class="icon ion-plus" style="position:absolute"></i> -->
   </div>
-  <div id="mainDescription" class="card">
    <img src="../img/viewmatches.png" style="width:100px;height:55px;float:left">
-   <img src="../img/makematches.png" style="width:100px;float:right">
+   <img src="../img/makematches.png" style="width:100px;float:right"><br>
         {{profileData.gender}}  <br>
-        {{profileData.location.name}} <br>
+        {{profileData.location}} <br>
         <hr>
+
+
 
     <p>
       <div id="bio" ng-click="edit('bio')" contenteditable>
-      {{profileBio}}
+      {{profileData.bio}}
      </div>
+      <a ng-click="save('headerName','bio')" style="position:fixed;bottom:5%;right:10%;"> save </a>
   </div>
-
-
-      <button ng-click="save('headerName','bio')"> save </button>
 
 
     </ion-content>

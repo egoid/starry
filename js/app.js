@@ -19,7 +19,6 @@ starry.config(function($stateProvider, $urlRouterProvider) {
             url: '/splash',
             templateUrl: 'templates/splash.html',
             controller: 'SplashController as card'
-
         })
         .state('login', {
         url: '/login',
@@ -40,8 +39,11 @@ starry.config(function($stateProvider, $urlRouterProvider) {
 });
 
 starry.controller("ProfileController", function($scope, $http, $localStorage, $location) {
-    $scope.picture = localStorage.picture;
-    $scope.profileBio = localStorage.profileBio
+    $scope.init = function() {
+        $scope.picture = localStorage.picture;
+        $scope.profileData = JSON.parse(localStorage.userInfo);
+    };
+//PROFILE CONTROLLER FUNCTIONS
     $scope.edit = function(elemId) {
         var x =document.getElementById(elemId)
         x.setAttribute('contenteditable', 'true')
@@ -51,45 +53,12 @@ starry.controller("ProfileController", function($scope, $http, $localStorage, $l
         var updateBio = document.getElementById(bio).innerText;
         fb.child($scope.profileData.id).update({full_name: updateName});
         fb.child($scope.profileData.id).update({bio: updateBio});
-    };
-    $scope.init = function() {
-        if(localStorage.hasOwnProperty("accessToken") === true) {
-            $http.get("https://graph.facebook.com/v2.5/me", { params: { access_token: localStorage.accessToken, fields: "id,name,gender,location,picture,relationship_status", format: "json" }}).then(function(result) {
-                fb.on("value", function(snapshot) {
-                    if (snapshot.child(result.data.id).exists() === false) {
-                        fb.set({
-                            [result.data.id]: {
-                                full_name: result.data.name ,
-                                location: result.data.location.name,
-                                picture: result.data.picture.data.url,
-                                gender: result.data.gender,
-                                photos: [],
-                                bio: "",
-                                description: [],
-                                matches: {},
-                            }
-                        })
-                    }
-                })
-                $scope.profileData = result.data;
-            }, function(error) {
-                alert("There was a problem getting your profile.  Check the logs for details.");
-                console.log(error);
-            });
-            $http.get("https://graph.facebook.com/v2.5/me/photos", {params: {access_token: localStorage.accessToken, type: "uploaded", field: "url"}}).then(function(results) {
-              console.log(results.data)
-            }, function(err) {
-                $scope.photo = error;
-            });
-        } else {
-            console.log("Not signed in");
-        };
-
-
+        $scope.profileData.full_name = updateName;
+        $scope.profileData.bio = updateBio;
     };
 
 });
-starry.controller("SplashController", function ($scope, $cordovaOauth, $localStorage, $location, $ionicModal, $firebaseAuth, $location) {
+starry.controller("SplashController", function ($scope, $http, $cordovaOauth, $localStorage, $location, $firebaseAuth, $location) {
     $scope.init = function() {
           window.fbAsyncInit = function() {
               FB.init({
@@ -125,27 +94,34 @@ starry.controller("SplashController", function ($scope, $cordovaOauth, $localSto
           };
           function testAPI() {
             FB.api("/me/photos", {type: "uploaded"}, function(results) {
-                localStorage.pics="";
+                var pics="";
                 for (key in results.data) {
-                    localStorage.pics+=(results.data[key].id+"_")
-                }
+                    pics+=(results.data[key].id+"_")
+                };
+//GETS ALL USER PHOTO'S ID'S
+                localStorage.profilePictures = '';
+                localStorage.thumbnails = '';
+                var x = pics.split('_');
+                x.forEach(function(url){
+                    var url = "/"+url;
+                    FB.api(url, {fields: "images,picture"}, function (response) {
+                        var imgUrl = response.images[4].source;
+                        var thumbUrl = response.picture;
+                        localStorage.thumbnails+=(thumbUrl + "*");
+                        localStorage.profilePictures+=(imgUrl + "*");
+                    })
+                })
             });
+//GETS ALL USER PHOTOS URLS ID'S AND STORES IN LOCAL STORAGE
             console.log('Welcome!  Fetching your information.... ');
             FB.api('/me/permissions', function(response) {
                 if (response['data'][0]['user_photos']) {
                     console.log('has the win!')
                 }
             });
+//GETS USER PROFILE PIC AND STORES IN LOCAL
             FB.api('/me/picture', {type: "large"}, function(response) {
                 localStorage.picture = response.data.url;
-            })
-            FB.api('/me', function(response) {
-              console.log('Successful login for: ' + response.name);
-                fb.on("value", function(snapshot){
-                    localStorage.profileBio = snapshot.child(response.id).child("bio").val();
-                })
-              document.getElementById('status').innerHTML =
-                'Thanks for logging in, ' + response.name + '!';
             });
           }
           (function(d, s, id) {
@@ -155,37 +131,64 @@ starry.controller("SplashController", function ($scope, $cordovaOauth, $localSto
             js.src = "//connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
           }(document, 'script', 'facebook-jssdk'));
+
+//STORE GEO DATA
         $.post('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyC5kjfXM3a3lt5QryC5gCA_ejK3-Ve89_0', function(data, status) {
             console.log(data)
             $localStorage.geo = data;
         });
-
+//CHECKS IF USER ALREADY HAS FIREBASE DATA, THEN STORES PROFILE DATA IN LOCAL STORAGE
+        $http.get("https://graph.facebook.com/v2.5/me", { params: { access_token: localStorage.accessToken, fields: "id,name,gender,location,picture", format: "json" }}).then(function(result) {
+            fb.on("value", function(snapshot) {
+                if (snapshot.child(result.data.id).exists() === false) {
+                    fb.set({
+                        [result.data.id]: {
+                            full_name: result.data.name ,
+                            location: result.data.location.name,
+                            picture: result.data.picture.data.url,
+                            gender: result.data.gender,
+                            photos: [],
+                            bio: "what's your story?",
+                            description: [],
+                            matches: {},
+                        }
+                    })
+                };
+                fb.child(result.data.id).once("value", function(snapshot) {
+                    var str = snapshot.val();
+                    str.id = result.data.id;
+                    localStorage.userInfo = JSON.stringify(str);
+                    console.log(JSON.stringify(snapshot.val()))
+                })
+            })
+            console.log(result.data)
+            // $scope.profileData = result.data;
+        }, function(error) {
+            alert("There was a problem getting your profile.  Check the logs for details.");
+            console.log(error);
+        });
     }
+//CODE FOR SPLASH SCREEN SWIPE (replace with ionic cards ? )
     var stack;
-
     stack = gajus.Swing.Stack();
-
     [].forEach.call(document.querySelectorAll('.stack li'), function (targetElement) {
         stack.createCard(targetElement);
 
         targetElement.classList.add('in-deck');
     });
-
     stack.on('throwout', function (e) {
         console.log(e.target.innerText || e.target.textContent, 'has been thrown out of the stack to the', e.throwDirection == 1 ? 'right' : 'left', 'direction.');
-
         e.target.classList.remove('in-deck');
         $scope.login();
     });
-
     stack.on('throwin', function (e) {
         console.log(e.target.innerText || e.target.textContent, 'has been thrown into the stack from the', e.throwDirection == 1 ? 'right' : 'left', 'direction.');
-
         e.target.classList.add('in-deck');
          $scope.login();
     });
+//CORDOVA OAUTH FOR APPS
     $scope.login = function() { 
-    $cordovaOauth.facebook("434572043406554", ["email", "user_website", "user_location"]).then(function(result) {
+    $cordovaOauth.facebook("434572043406554", ["user_photos, publish_actions"]).then(function(result) {
         $localStorage.accessToken = result.access_token;
         $location.path("/profile");
     }, function(error) {
