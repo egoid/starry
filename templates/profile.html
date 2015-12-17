@@ -1,59 +1,77 @@
 <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
 <ion-view title="Profile" ng-init="init()">
-    <ion-content scroll="false" id="larpa2">
-  <div id="mainDescription" class="card">
-<div class="bar bar-header bar-dark">
+  <ion-content scroll="false" id="larpa2">
 
-  <h1 class="title" id="headerName" style="color:white" ng-click="edit('headerName')">
-    {{profileData.full_name}}   <br> 
+    <div id="mainDescription" class="card">
+      <div class="bar bar-header bar-dark">
+        <h1 class="title" id="headerName" style="color:white" ng-click="edit('headerName')">
+          {{profileData.full_name}}   <br> 
+        </h1>
+      </div>
 
-    </h1>
-</div>
-  <div id="mainPic">
-    <ion-slide-box on-slide-changed="slideHasChanged($index)">
-      <ion-slide>
+    <div id="mainPic">
+      <ion-slide-box on-slide-changed="slideHasChanged($index)">
+        <ion-slide>
+          <div class="box blue"><h1>
+            <a href="#" ng-click="pictureModal()">
+              <img style="width:100%" src={{picture}}>
+            </a>
+          <p></h1></div>
+        </ion-slide>
+        <ion-slide>
+          <div class="box yellow"><h1>
+           <img style="width:100%" src={{picture}}>
+           <span style="opacity:0"> s </span>
+          </h1></div>
+        </ion-slide>
+        <ion-slide>
+          <div class="box pink"><h1>
+            <img style="width:100%" src={{picture}}>
+          <p></h1></div>
+        </ion-slide>
+      </ion-slide-box>
+    </div>
+     <img src="../img/viewmatches.png" style="width:100px;height:55px;float:left">
+     <img src="../img/makematches.png" style="width:100px;float:right"><br>
+          {{profileData.gender}}  <br>
+          {{profileData.location}} <br>
+<!--       <img ng-repeat="val in picSrc" src="{{val}}"> 
+          <hr> -->
+      <p>
 
-        <div class="box blue"><h1>
+      <div id="bio" ng-click="edit('bio')" contenteditable>
+        {{profileData.bio}}
+                  <button class="button" ng-click="modal.show()">Open Modal</button>
+     </div>
+      <a ng-click="save('headerName','bio')" style="position:fixed;bottom:5%;right:10%;"> save </a>
+
+    <script id="modal.html" type="text/ng-template">
+      <div class="modal">
+        <header class="bar bar-header bar-dark">
+          <h1 class="title">Choose</h1>
+          <div class="button button-dark" ng-click="modal.hide()"><span class="icon ion-close"></span></div>
+        </header>
+        <content has-header="true" padding="true">
+          <p>This is a modal</p>
+        </content>
+      </div>
+    </script>
+    
+
+
+
+  </ion-content>
+</ion-view>
+
+
+
+
+
+
+
+
           
 
 
-          <img style="width:100%" src={{picture}}>
-
-          <p></h1></div>
-      </ion-slide>
-      <ion-slide>
-        <div class="box yellow"><h1>
-
-         <img style="width:100%" src={{picture}}>
-
-         <span style="opacity:0"> s </span>
-        </h1></div>
-      </ion-slide>
-      <ion-slide>
-        <div class="box pink"><h1>
-
-          <img style="width:100%" src={{picture}}>
-
-        <p></h1></div>
-      </ion-slide>
-    </ion-slide-box>
-<!-- <i class="icon ion-plus" style="position:absolute"></i> -->
-  </div>
-   <img src="../img/viewmatches.png" style="width:100px;height:55px;float:left">
-   <img src="../img/makematches.png" style="width:100px;float:right"><br>
-        {{profileData.gender}}  <br>
-        {{profileData.location}} <br>
-        <hr>
 
 
-
-    <p>
-      <div id="bio" ng-click="edit('bio')" contenteditable>
-      {{profileData.bio}}
-     </div>
-      <a ng-click="save('headerName','bio')" style="position:fixed;bottom:5%;right:10%;"> save </a>
-  </div>
-
-
-    </ion-content>
-</ion-view>
