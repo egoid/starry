@@ -1,0 +1,37 @@
+<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
+
+
+<ion-view title="Profile" ng-init="init()">
+  <ion-content scroll="false" id="larpa2">
+    <div id="wrapper" on-swipe-left="goMatch()">
+      <div class="list card">
+        <div class="item item-avatar">
+          <img ng-src="{{profileData.picture.data.url}}">
+          <h2>{{profileData.name}}</h2>
+          <p>{{profileData.id}}</p>
+        </div>
+        <a href="#" class="item item-icon-left">
+          <i class="icon ion-earth"></i>
+        </a>
+        <a href="#" class="item item-icon-left">
+          <i class="icon ion-home"></i>
+          {{profileData.location.name}}
+        </a>
+        <a href="#" class="item item-icon-left">
+          <i class="icon ion-heart"></i>
+          {{profileData.relationship_status}}
+        </a>
+      </div>
+      <div>
+        <ion-list>
+          <ion-item>Planet: </ion-item>
+          <ion-item>Race: </ion-item>
+          <ion-item>LightSaber?: </ion-item>
+          <ion-item>
+            <textarea name="about" id="aboutMe" cols="30" rows="5" placeholder="About Me">
+            </textarea>
+          </ion-item>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

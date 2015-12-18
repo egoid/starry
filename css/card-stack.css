@@ -14,26 +14,16 @@ button {
 input {
     width: 50px;
 }
-#viewport li {
+#viewport {
   background: url('../img/splash.jpg') no-repeat center;
   background-size: 150%, 100%;
 }
 #viewport {
-    width: 100%; height: 100%; background: #C7433E; border: 10px solid #ED5D52; 
+    width: 100%; height: 100%; border: 10px solid #ED5D52; 
 }
-#viewport li {
+#viewport{
     list-style: none; width:100%; height: 100%;position: absolute; top: 0; left: 0; box-shadow: 0 0 2px rgba(0,0,0,.2), 1px 1px 1px rgba(0,0,0,.2); line-height: 300px; text-align: center; font-size: 100px; box-sizing: border-box; cursor: default;
 }
-#viewport li.clubs,
-#viewport li.spades {
-    color: #373737;
-}
-
-#viewport li.diamonds,
-#viewport li.hearts {
-    color: #ED5D52;
-}
-
 #control {
     position: absolute; bottom: 30px; left: 0; right: 0; text-align: center; font-size: 0;
 }
